@@ -10,36 +10,47 @@ export class ImageGallery extends React.Component {
 		spinner: false,
 	};
 
-	componentDidUpdate(prevProps, prevState) {
+	async componentDidUpdate(prevProps, prevState) {
 		// const { name, page } = this.state;
+
 		if (
 			prevProps.searchQuery !== this.props.searchQuery ||
 			prevState.page !== this.state.page
 		) {
 			this.setState({ spinner: true });
-			fetch(
-				`https://pixabay.com/api/?key=29624202-0ace9f1cfbb26d74e2bd1c2da&q=${this.props.searchQuery}&page=${this.state.page}&per_page=12`
-			)
-				.then(res => {
-					if (res.ok) {
-						return res.json();
-					}
-				})
-				// todo Сохроняется результат нашего запроса
-
-				.then(image => {
-					this.setState({
-						images:
-							this.state.page > 1
-								? [...this.state.images, ...image.hits]
-								: image.hits,
-					});
-				})
-				.catch()
-				.finally(this.setState({ spinner: false }));
+			this.fechPikchers();
 		}
 	}
+	fechPikchers = async () => {
+		await fetch(
+			`https://pixabay.com/api/?key=29624202-0ace9f1cfbb26d74e2bd1c2da&q=${this.props.searchQuery}&page=${this.state.page}&per_page=12`
+		)
+			.then(res => {
+				if (res.ok) {
+					return res.json();
+				}
+			})
 
+			// todo Сохроняется результат нашего запроса
+
+			.then(image => {
+				this.setState({
+					images:
+						this.state.page > 1
+							? [...this.state.images, ...image.hits]
+							: image.hits,
+				});
+			})
+			.catch()
+
+			.finally(
+				() =>
+					setTimeout(() => {
+						this.setState({ spinner: false });
+					}),
+				1000
+			);
+	};
 	onChangePage = () => {
 		this.setState(prevState => ({ page: prevState.page + 1 }));
 	};
@@ -48,6 +59,7 @@ export class ImageGallery extends React.Component {
 		return (
 			<>
 				{this.state.spinner && <Loader />}
+
 				<ul>
 					{this.state.images.map(image => {
 						return (
@@ -60,6 +72,7 @@ export class ImageGallery extends React.Component {
 						);
 					})}
 				</ul>
+
 				{/* <Modal></Modal> */}
 				<Button onClick={this.onChangePage}></Button>
 			</>
