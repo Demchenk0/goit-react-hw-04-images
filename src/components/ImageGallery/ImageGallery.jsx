@@ -3,6 +3,7 @@ import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 import { Modal } from '../Modal/Modal';
 import { Button } from 'components/Button/Button';
 import { Loader } from '../Loader/Loader';
+import { ImageGalleryUl } from './ImageGallery.styled';
 
 export class ImageGallery extends React.Component {
 	state = {
@@ -74,7 +75,7 @@ export class ImageGallery extends React.Component {
 		return (
 			<>
 				{this.state.spinner && <Loader />}
-				<ul>
+				<ImageGalleryUl>
 					{this.state.images.map(image => {
 						return (
 							<ImageGalleryItem
@@ -86,7 +87,7 @@ export class ImageGallery extends React.Component {
 							></ImageGalleryItem>
 						);
 					})}
-				</ul>
+				</ImageGalleryUl>
 
 				{this.state.showModal && (
 					<Modal

@@ -1,3 +1,7 @@
+import {
+	ImageGalleryItemLi,
+	ImageGalleryItemImg,
+} from './ImageGalleryItem.styled';
 export const ImageGalleryItem = ({
 	webformatURL,
 	largeImageURL,
@@ -5,12 +9,12 @@ export const ImageGalleryItem = ({
 	onClick,
 }) => {
 	return (
-		<li>
-			<img
+		<ImageGalleryItemLi>
+			<ImageGalleryItemImg
 				src={webformatURL}
 				alt={alt}
 				onClick={() => onClick(largeImageURL)}
 			/>
-		</li>
+		</ImageGalleryItemLi>
 	);
 };
