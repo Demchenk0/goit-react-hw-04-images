@@ -18,6 +18,10 @@ export class Searchbar extends React.Component {
 
 	handleSubmitForm = e => {
 		e.preventDefault();
+		if (this.state.name.trim() === '') {
+			alert(`пустой`);
+			return;
+		}
 		this.props.onSubmit(this.state.name);
 		this.resetForm();
 	};

@@ -1,18 +1,23 @@
 import React from 'react';
 import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
-// import { Modal } from 'components/Modal/Modal';
+import { Modal } from '../Modal/Modal';
 import { Button } from 'components/Button/Button';
 import { Loader } from '../Loader/Loader';
+
 export class ImageGallery extends React.Component {
 	state = {
 		images: [],
 		page: 1,
 		spinner: false,
+		showModal: false,
+		modalImage: null,
 	};
 
 	async componentDidUpdate(prevProps, prevState) {
-		// const { name, page } = this.state;
-
+		// if (this.state.images !== []) {
+		// 	alert('нет такого значения');
+		// 	return;
+		// }
 		if (
 			prevProps.searchQuery !== this.props.searchQuery ||
 			prevState.page !== this.state.page
@@ -21,14 +26,15 @@ export class ImageGallery extends React.Component {
 			this.fechPikchers();
 		}
 	}
-	fechPikchers = async () => {
-		await fetch(
+	fechPikchers = () => {
+		fetch(
 			`https://pixabay.com/api/?key=29624202-0ace9f1cfbb26d74e2bd1c2da&q=${this.props.searchQuery}&page=${this.state.page}&per_page=12`
 		)
 			.then(res => {
 				if (res.ok) {
 					return res.json();
 				}
+				// return Promise.reject(alert(`nety takoi `));
 			})
 
 			// todo Сохроняется результат нашего запроса
@@ -43,23 +49,31 @@ export class ImageGallery extends React.Component {
 			})
 			.catch()
 
-			.finally(
-				() =>
-					setTimeout(() => {
-						this.setState({ spinner: false });
-					}),
-				1000
-			);
+			.finally(() => this.setState({ spinner: false }));
+
+		// .finally(
+		// 		() =>
+		// 			setTimeout(() => {
+		// 				this.setState({ spinner: false });
+		// 			}),
+		// 		1000
+		// 	);
 	};
 	onChangePage = () => {
 		this.setState(prevState => ({ page: prevState.page + 1 }));
+	};
+
+	toggleModal = image => {
+		this.setState(({ showModal }) => ({
+			showModal: !showModal,
+			modalImage: image,
+		}));
 	};
 
 	render() {
 		return (
 			<>
 				{this.state.spinner && <Loader />}
-
 				<ul>
 					{this.state.images.map(image => {
 						return (
@@ -68,12 +82,18 @@ export class ImageGallery extends React.Component {
 								webformatURL={image.webformatURL}
 								largeImageURL={image.largeImageURL}
 								alt={image.tags}
+								onClick={this.toggleModal}
 							></ImageGalleryItem>
 						);
 					})}
 				</ul>
 
-				{/* <Modal></Modal> */}
+				{this.state.showModal && (
+					<Modal
+						onClick={this.toggleModal}
+						modalImage={this.state.modalImage}
+					></Modal>
+				)}
 				<Button onClick={this.onChangePage}></Button>
 			</>
 		);

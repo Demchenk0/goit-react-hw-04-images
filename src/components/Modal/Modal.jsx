@@ -1,13 +1,32 @@
-// import { React } from 'react';
+import React from 'react';
+import { createPortal } from 'react-dom';
+import { ModalOverlay, ModalWindow } from './Modal.styled';
 
-// export class Modal extends React.Component {
-// 	render() {
-// 		return (
-// 			<div class="overlay">
-// 				<div class="modal">
-// 					<img src="" alt="" />
-// 				</div>
-// 			</div>
-// 		);
-// 	}
-// }
+const modalRoot = document.querySelector('#modal-root');
+
+export class Modal extends React.Component {
+	componentDidMount = () => {
+		window.addEventListener('keydown', this.handleKeyDown);
+	};
+	componentWillUnmount = () => {
+		window.removeEventListener('keydown', this.handleKeyDown);
+	};
+
+	handleKeyDown = e => {
+		if (e.code === 'Escape') {
+			this.props.onClick();
+		}
+	};
+
+	render() {
+		const { modalImage, alt, onClick } = this.props;
+		return createPortal(
+			<ModalOverlay onClick={onClick}>
+				<ModalWindow>
+					<img src={modalImage} alt={alt} />
+				</ModalWindow>
+			</ModalOverlay>,
+			modalRoot
+		);
+	}
+}
