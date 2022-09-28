@@ -1,16 +1,25 @@
-export const App = () => {
-  return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontSize: 40,
-        color: '#010101'
-      }}
-    >
-      React homework template
-    </div>
-  );
-};
+import React from 'react';
+import { Searchbar } from './Searchbar/Searchbar';
+// import { getServer } from '../apiComponent/Api';
+
+import { ImageGallery } from './ImageGallery/ImageGallery';
+
+export class App extends React.Component {
+	state = {
+		name: '',
+	};
+
+	submitForm = submitValue => {
+		this.setState({ name: submitValue });
+		//! Вдруг будет завтык!!!!!!
+	};
+
+	render() {
+		return (
+			<div>
+				<Searchbar onSubmit={this.submitForm}></Searchbar>
+				<ImageGallery searchQuery={this.state.name}></ImageGallery>
+			</div>
+		);
+	}
+}
