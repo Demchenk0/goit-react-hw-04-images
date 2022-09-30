@@ -4,7 +4,8 @@ import { Modal } from '../Modal/Modal';
 import { Button } from 'components/Button/Button';
 import { Loader } from '../Loader/Loader';
 import { ImageGalleryUl } from './ImageGallery.styled';
-// import { toast } from 'react-toastify';
+import { toast } from 'react-toastify';
+import PropTypes from 'prop-types';
 
 export class ImageGallery extends React.Component {
 	state = {
@@ -16,18 +17,6 @@ export class ImageGallery extends React.Component {
 	};
 
 	async componentDidUpdate(prevProps) {
-		// if (this.state.page !== 1) {
-		// 	toast.error('🦄 There is no such a value!', {
-		// 		position: 'top-left',
-		// 		autoClose: 5000,
-		// 		hideProgressBar: false,
-		// 		closeOnClick: true,
-		// 		pauseOnHover: true,
-		// 		draggable: true,
-		// 		progress: undefined,
-		// 	});
-		// 	return;
-		// }
 		if (
 			prevProps.searchQuery !== this.props.searchQuery ||
 			prevProps.page !== this.props.page
@@ -55,6 +44,30 @@ export class ImageGallery extends React.Component {
 							? [...this.state.images, ...image.hits]
 							: image.hits,
 				});
+				if (image.hits.length) {
+					toast.success(`Hooray! We found ${image.total} images.`, {
+						position: 'top-right',
+						autoClose: 1000,
+						hideProgressBar: false,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+					});
+				} else {
+					toast.info(
+						`Sorry, there are no ${this.props.searchQuery} images matching your search query. Please try again.`,
+						{
+							position: 'top-right',
+							autoClose: 3000,
+							hideProgressBar: false,
+							closeOnClick: true,
+							pauseOnHover: true,
+							draggable: true,
+							progress: undefined,
+						}
+					);
+				}
 			})
 			.catch()
 
@@ -98,3 +111,9 @@ export class ImageGallery extends React.Component {
 		);
 	}
 }
+
+ImageGallery.propTypes = {
+	searchQuery: PropTypes.string.isRequired,
+	page: PropTypes.number.isRequired,
+	onChangePage: PropTypes.func.isRequired,
+};
