@@ -6,6 +6,7 @@ import {
 	SearchSpan,
 	SearchInput,
 } from './Searchbar.styled';
+import { toast } from 'react-toastify';
 
 export class Searchbar extends React.Component {
 	state = {
@@ -19,7 +20,15 @@ export class Searchbar extends React.Component {
 	handleSubmitForm = e => {
 		e.preventDefault();
 		if (this.state.name.trim() === '') {
-			alert(`пустой`);
+			toast('🦄 Wow so easy!', {
+				position: 'top-left',
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+			});
 			return;
 		}
 		this.props.onSubmit(this.state.name);

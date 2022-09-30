@@ -4,6 +4,7 @@ import { Modal } from '../Modal/Modal';
 import { Button } from 'components/Button/Button';
 import { Loader } from '../Loader/Loader';
 import { ImageGalleryUl } from './ImageGallery.styled';
+// import { toast } from 'react-toastify';
 
 export class ImageGallery extends React.Component {
 	state = {
@@ -14,14 +15,22 @@ export class ImageGallery extends React.Component {
 		modalImage: null,
 	};
 
-	async componentDidUpdate(prevProps, prevState) {
-		// if (this.state.images !== []) {
-		// 	alert('нет такого значения');
+	async componentDidUpdate(prevProps) {
+		// if (this.state.page !== 1) {
+		// 	toast.error('🦄 There is no such a value!', {
+		// 		position: 'top-left',
+		// 		autoClose: 5000,
+		// 		hideProgressBar: false,
+		// 		closeOnClick: true,
+		// 		pauseOnHover: true,
+		// 		draggable: true,
+		// 		progress: undefined,
+		// 	});
 		// 	return;
 		// }
 		if (
 			prevProps.searchQuery !== this.props.searchQuery ||
-			prevState.page !== this.state.page
+			prevProps.page !== this.props.page
 		) {
 			this.setState({ spinner: true });
 			this.fechPikchers();
@@ -29,13 +38,12 @@ export class ImageGallery extends React.Component {
 	}
 	fechPikchers = () => {
 		fetch(
-			`https://pixabay.com/api/?key=29624202-0ace9f1cfbb26d74e2bd1c2da&q=${this.props.searchQuery}&page=${this.state.page}&per_page=12`
+			`https://pixabay.com/api/?key=29624202-0ace9f1cfbb26d74e2bd1c2da&q=${this.props.searchQuery}&page=${this.props.page}&per_page=12`
 		)
 			.then(res => {
 				if (res.ok) {
 					return res.json();
 				}
-				// return Promise.reject(alert(`nety takoi `));
 			})
 
 			// todo Сохроняется результат нашего запроса
@@ -43,7 +51,7 @@ export class ImageGallery extends React.Component {
 			.then(image => {
 				this.setState({
 					images:
-						this.state.page > 1
+						this.props.page > 1
 							? [...this.state.images, ...image.hits]
 							: image.hits,
 				});
@@ -51,17 +59,6 @@ export class ImageGallery extends React.Component {
 			.catch()
 
 			.finally(() => this.setState({ spinner: false }));
-
-		// .finally(
-		// 		() =>
-		// 			setTimeout(() => {
-		// 				this.setState({ spinner: false });
-		// 			}),
-		// 		1000
-		// 	);
-	};
-	onChangePage = () => {
-		this.setState(prevState => ({ page: prevState.page + 1 }));
 	};
 
 	toggleModal = image => {
@@ -88,14 +85,15 @@ export class ImageGallery extends React.Component {
 						);
 					})}
 				</ImageGalleryUl>
-
 				{this.state.showModal && (
 					<Modal
 						onClick={this.toggleModal}
 						modalImage={this.state.modalImage}
 					></Modal>
 				)}
-				<Button onClick={this.onChangePage}></Button>
+				{this.state.images.length ? (
+					<Button onClick={this.props.onChangePage}></Button>
+				) : null}
 			</>
 		);
 	}
