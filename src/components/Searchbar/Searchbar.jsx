@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import {
 	SearchHeader,
 	SearchForm,
@@ -9,18 +9,17 @@ import {
 import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
 
-export class Searchbar extends React.Component {
-	state = {
-		name: '',
-	};
-	getInputValue = event => {
+export function Searchbar({ onSubmit }) {
+	const [name, setName] = useState('');
+
+	const getInputValue = event => {
 		const { value } = event.currentTarget;
-		this.setState({ name: value });
+		setName(value);
 	};
 
-	handleSubmitForm = e => {
+	const handleSubmitForm = e => {
 		e.preventDefault();
-		if (this.state.name.trim() === '') {
+		if (name.trim() === '') {
 			toast('🦄 Wow so easy!', {
 				position: 'top-left',
 				autoClose: 5000,
@@ -32,34 +31,33 @@ export class Searchbar extends React.Component {
 			});
 			return;
 		}
-		this.props.onSubmit(this.state.name);
-		this.resetForm();
+		onSubmit(name);
+		resetForm();
 	};
 
-	resetForm = () => {
-		this.setState({ name: '' });
+	const resetForm = () => {
+		setName('');
 	};
 
-	render() {
-		return (
-			<SearchHeader>
-				<SearchForm onSubmit={this.handleSubmitForm}>
-					<SearchButton type="submit">
-						<SearchSpan>Search</SearchSpan>
-					</SearchButton>
+	return (
+		<SearchHeader>
+			<SearchForm onSubmit={handleSubmitForm}>
+				<SearchButton type="submit">
+					<SearchSpan>Search</SearchSpan>
+				</SearchButton>
 
-					<SearchInput
-						onChange={this.getInputValue}
-						type="text"
-						autocomplete="off"
-						autoFocus
-						placeholder="Search images and photos"
-					/>
-				</SearchForm>
-			</SearchHeader>
-		);
-	}
+				<SearchInput
+					onChange={getInputValue}
+					type="text"
+					autocomplete="off"
+					autoFocus
+					placeholder="Search images and photos"
+				/>
+			</SearchForm>
+		</SearchHeader>
+	);
 }
+
 Searchbar.propTypes = {
 	onSubmit: PropTypes.func.isRequired,
 };

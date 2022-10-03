@@ -1,30 +1,30 @@
-import React from 'react';
+import { useState } from 'react';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 
-export class App extends React.Component {
-	state = {
-		name: '',
-		page: 1,
-	};
+export function App() {
+	const [name, setName] = useState('');
+	const [page, setPage] = useState(1);
 
-	submitForm = submitValue => {
-		this.setState({ name: submitValue, page: 1 });
+	const submitForm = submitValue => {
+		setName(submitValue);
+		setPage(1);
+
 		//! Вдруг будет завтык!!!!!!
 	};
-	onChangePage = () => {
-		this.setState(prevState => ({ page: prevState.page + 1 }));
+	const onChangePage = () => {
+		setPage(prevState => prevState + 1);
 	};
-	render() {
+	{
 		return (
 			<div>
-				<Searchbar onSubmit={this.submitForm}></Searchbar>
+				<Searchbar onSubmit={submitForm}></Searchbar>
 				<ImageGallery
-					searchQuery={this.state.name}
-					page={this.state.page}
-					onChangePage={this.onChangePage}
+					searchQuery={name}
+					page={page}
+					onChangePage={onChangePage}
 				></ImageGallery>
 				<ToastContainer
 					position="top-left"

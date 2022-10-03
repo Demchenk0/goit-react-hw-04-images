@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 import { Modal } from '../Modal/Modal';
 import { Button } from 'components/Button/Button';
@@ -7,43 +7,30 @@ import { ImageGalleryUl } from './ImageGallery.styled';
 import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
 
-export class ImageGallery extends React.Component {
-	state = {
-		images: [],
-		page: 1,
-		spinner: false,
-		showModal: false,
-		modalImage: null,
-	};
+export function ImageGallery({ searchQuery, page, onChangePage }) {
+	const [image, setImage] = useState([]);
+	const [spinner, setSpinner] = useState(false);
+	const [showModal, setShowModal] = useState(false);
+	const [modalImage, setmModalImage] = useState(null);
 
-	async componentDidUpdate(prevProps) {
-		if (
-			prevProps.searchQuery !== this.props.searchQuery ||
-			prevProps.page !== this.props.page
-		) {
-			this.setState({ spinner: true });
-			this.fechPikchers();
-		}
-	}
-	fechPikchers = () => {
+	useEffect(() => {
+		setSpinner(true);
 		fetch(
-			`https://pixabay.com/api/?key=29624202-0ace9f1cfbb26d74e2bd1c2da&q=${this.props.searchQuery}&page=${this.props.page}&per_page=12`
+			`https://pixabay.com/api/?key=29624202-0ace9f1cfbb26d74e2bd1c2da&q=${searchQuery}&page=${page}&per_page=12`
 		)
 			.then(res => {
 				if (res.ok) {
 					return res.json();
 				}
 			})
-
-			// todo Сохроняется результат нашего запроса
-
+			// !!!!!! Сохроняется результат нашего запроса
 			.then(image => {
-				this.setState({
-					images:
-						this.props.page > 1
-							? [...this.state.images, ...image.hits]
-							: image.hits,
-				});
+				if (searchQuery === '') {
+					return;
+				}
+				page > 1
+					? setImage(prevImage => [...prevImage, ...image.hits])
+					: setImage(image.hits);
 				if (image.hits.length) {
 					toast.success(`Hooray! We found ${image.total} images.`, {
 						position: 'top-right',
@@ -56,7 +43,7 @@ export class ImageGallery extends React.Component {
 					});
 				} else {
 					toast.info(
-						`Sorry, there are no ${this.props.searchQuery} images matching your search query. Please try again.`,
+						`Sorry, there are no ${searchQuery} images matching your search query. Please try again.`,
 						{
 							position: 'top-right',
 							autoClose: 3000,
@@ -71,45 +58,36 @@ export class ImageGallery extends React.Component {
 			})
 			.catch()
 
-			.finally(() => this.setState({ spinner: false }));
+			.finally(() => setSpinner(false));
+	}, [page, searchQuery]);
+
+	const toggleModal = modalImage => {
+		setShowModal(!showModal);
+		setmModalImage(modalImage);
 	};
 
-	toggleModal = image => {
-		this.setState(({ showModal }) => ({
-			showModal: !showModal,
-			modalImage: image,
-		}));
-	};
-
-	render() {
-		return (
-			<>
-				{this.state.spinner && <Loader />}
-				<ImageGalleryUl>
-					{this.state.images.map(image => {
-						return (
-							<ImageGalleryItem
-								key={image.webformatURL}
-								webformatURL={image.webformatURL}
-								largeImageURL={image.largeImageURL}
-								alt={image.tags}
-								onClick={this.toggleModal}
-							></ImageGalleryItem>
-						);
-					})}
-				</ImageGalleryUl>
-				{this.state.showModal && (
-					<Modal
-						onClick={this.toggleModal}
-						modalImage={this.state.modalImage}
-					></Modal>
-				)}
-				{this.state.images.length ? (
-					<Button onClick={this.props.onChangePage}></Button>
-				) : null}
-			</>
-		);
-	}
+	return (
+		<>
+			{spinner && <Loader />}
+			<ImageGalleryUl>
+				{image.map(images => {
+					return (
+						<ImageGalleryItem
+							key={images.webformatURL}
+							webformatURL={images.webformatURL}
+							largeImageURL={images.largeImageURL}
+							alt={images.tags}
+							onClick={toggleModal}
+						></ImageGalleryItem>
+					);
+				})}
+			</ImageGalleryUl>
+			{showModal && (
+				<Modal onClick={toggleModal} modalImage={modalImage}></Modal>
+			)}
+			{image.length ? <Button onClick={onChangePage}></Button> : null}
+		</>
+	);
 }
 
 ImageGallery.propTypes = {
