@@ -17,27 +17,25 @@ export function App() {
 	const onChangePage = () => {
 		setPage(prevState => prevState + 1);
 	};
-	{
-		return (
-			<div>
-				<Searchbar onSubmit={submitForm}></Searchbar>
-				<ImageGallery
-					searchQuery={name}
-					page={page}
-					onChangePage={onChangePage}
-				></ImageGallery>
-				<ToastContainer
-					position="top-left"
-					autoClose={5000}
-					hideProgressBar={false}
-					newestOnTop={false}
-					closeOnClick
-					rtl={false}
-					pauseOnFocusLoss
-					draggable
-					pauseOnHover
-				/>
-			</div>
-		);
-	}
+	return (
+		<div>
+			<Searchbar onSubmit={submitForm}></Searchbar>
+			<ImageGallery
+				searchQuery={name}
+				page={page}
+				onChangePage={onChangePage}
+			></ImageGallery>
+			<ToastContainer
+				position="top-left"
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+			/>
+		</div>
+	);
 }
