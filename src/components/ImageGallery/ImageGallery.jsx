@@ -65,7 +65,7 @@ export function ImageGallery({ searchQuery, page, onChangePage }) {
 		setShowModal(!showModal);
 		setmModalImage(modalImage);
 	};
-
+	console.log(image);
 	return (
 		<>
 			{spinner && <Loader />}
@@ -85,7 +85,7 @@ export function ImageGallery({ searchQuery, page, onChangePage }) {
 			{showModal && (
 				<Modal onClick={toggleModal} modalImage={modalImage}></Modal>
 			)}
-			{image.length ? <Button onClick={onChangePage}></Button> : null}
+			{image.length < 12 ? null : <Button onClick={onChangePage}></Button>}
 		</>
 	);
 }

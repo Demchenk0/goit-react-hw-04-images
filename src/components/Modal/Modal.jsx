@@ -22,7 +22,7 @@ export function Modal({ onClick, modalImage, alt }) {
 	return createPortal(
 		<ModalOverlay onClick={onClick}>
 			<ModalWindow>
-				<img src={modalImage} alt="alt" />
+				<img src={modalImage} alt={alt} />
 			</ModalWindow>
 		</ModalOverlay>,
 		modalRoot
@@ -32,4 +32,5 @@ export function Modal({ onClick, modalImage, alt }) {
 Modal.propTypes = {
 	modalImage: PropTypes.string.isRequired,
 	onClick: PropTypes.func.isRequired,
+	alt: PropTypes.string,
 };
