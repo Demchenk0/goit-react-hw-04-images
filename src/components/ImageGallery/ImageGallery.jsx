@@ -11,11 +11,13 @@ export function ImageGallery({ searchQuery, page, onChangePage }) {
 	const [image, setImage] = useState([]);
 	const [spinner, setSpinner] = useState(false);
 	const [showModal, setShowModal] = useState(false);
+	const [showButton, setShowButton] = useState(false);
 	const [modalImage, setmModalImage] = useState(null);
 
 	useEffect(() => {
 		if (searchQuery) {
 			setSpinner(true);
+			setShowButton(false);
 			fetch(
 				`https://pixabay.com/api/?key=29624202-0ace9f1cfbb26d74e2bd1c2da&q=${searchQuery}&page=${page}&per_page=12`
 			)
@@ -40,6 +42,7 @@ export function ImageGallery({ searchQuery, page, onChangePage }) {
 							draggable: true,
 							progress: undefined,
 						});
+						console.log(image.total);
 					} else {
 						toast.info(
 							`Sorry, there are no ${searchQuery} images matching your search query. Please try again.`,
@@ -54,6 +57,9 @@ export function ImageGallery({ searchQuery, page, onChangePage }) {
 							}
 						);
 					}
+					if (image.total > page * 12) {
+						setShowButton(true);
+					}
 				})
 				.catch()
 
@@ -66,6 +72,7 @@ export function ImageGallery({ searchQuery, page, onChangePage }) {
 		setmModalImage(modalImage);
 	};
 	console.log(image);
+
 	return (
 		<>
 			{spinner && <Loader />}
@@ -85,7 +92,10 @@ export function ImageGallery({ searchQuery, page, onChangePage }) {
 			{showModal && (
 				<Modal onClick={toggleModal} modalImage={modalImage}></Modal>
 			)}
-			{image.length < 12 ? null : <Button onClick={onChangePage}></Button>}
+			{showButton && <Button onClick={onChangePage}></Button>}
+			{/* {image.total > page * 12 ? (
+				<Button onClick={onChangePage}></Button>
+			) : null} */}
 		</>
 	);
 }
